@@ -1,23 +1,31 @@
----
-    name: Build and Deploy React App to GitHub Pages
-    on:
-      push:
-        branches: [ main ]
-    jobs:
-      build-push-gcr:
-        name: Build and Deploy
-        runs-on: ubuntu-latest
-    
-        steps:
-        - name: Checkout
-          uses: actions/checkout@v2
-    
-        - name: Build
-          run: npm install
-    
-        - name: Deploy
-          run: |
-            git config --global user.name 'MuhammedMohsn'
-            git config --global user.email 'muhammedmohsen111@gmail.com'
-            git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}    
-            npm run deploy
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14 # Change this to your desired Node.js version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build React app
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build # Change this to your build folder
